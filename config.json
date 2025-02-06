@@ -1,0 +1,10 @@
+{
+    "balancer_type": "least_connections",
+    "servers": [
+      "http://localhost:8081",
+      "http://localhost:8082",
+      "http://localhost:8083"
+    ],
+    "health_check_interval": 5
+  }
+  
