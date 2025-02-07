@@ -12,6 +12,7 @@ This API Gateway is built in Go and provides load balancing between multiple bac
 - Reverse proxy for handling client requests
 - Health checks for backend services
 - Test servers for development and debugging
+- Dynamic Routing with Auto-Reload: Automatically reloads routing configuration without restarting the server.
 
 ## Installation
 
@@ -31,12 +32,23 @@ This API Gateway is built in Go and provides load balancing between multiple bac
 3. Configure the gateway by editing `config.json`:
    ```json
    {
-     "servers": [
-       { "url": "http://localhost:8081" },
-       { "url": "http://localhost:8082" }
-     ],
-     "load_balancer": "round_robin",
-     "health_check_interval": 5
+     "servers": {
+        "user": [
+          "http://localhost:8081",
+          "http://localhost:8082"
+        ],
+        "wallet": [
+          "http://localhost:8083",
+          "http://localhost:8084"
+        ]
+      },
+      "routes": {
+        "user/signin": "/api/auth",
+        "user/signup": "/api/register",
+        "wallet/get_balance": "/api/get_balance"
+      },
+      "load_balancer": "round_robin",
+      "health_check_interval": 5
    }
    ```
 4. Start the gateway:
@@ -55,31 +67,44 @@ cd testServers/server3 && go run main.go &
 ## Usage
 Once running, send requests to the gateway:
 ```sh
-curl http://localhost:8080/api
+curl http://localhost:8080/user/signin
 ```
 The gateway will forward the request to a backend server based on the load balancing strategy.
+---
+## Dynamic Routing with Auto-Reload
+The API Gateway supports **dynamic routing** and **auto-reloading** of the configuration without requiring a server restart. This feature allows you to update the `config.json` file while the server is running, and the gateway will automatically apply the changes.
 
-## API Documentation
-### Endpoints
-#### `GET /api`
-- Forwards request to a backend service based on load balancing strategy.
-- Example:
-  ```sh
-  curl http://localhost:8080/api
-  ```
+### How It Works
+1. **Dynamic Routing:**
+- Routes are defined in the `config.json` file under the `routes` section.
+- Each route maps an API gateway path (e.g., `/user/signin`) to a backend service path (e.g., `/api/auth`).
+- The gateway dynamically routes requests to the appropriate backend service based on the configuration.
 
-#### `POST /register`
-- Registers a new backend server.
-- Request Body:
-  ```json
-  {
-    "url": "http://localhost:8083"
+2. **Auto-Reload:**
+- The gateway monitors the `config.json` file for changes.
+- When a change is detected, the gateway reloads the configuration and updates the routing and server lists.
+- No server restart is required—changes take effect within a few seconds.
+
+### Example
+1. Update `config.json` to add a new route:
+```json
+{
+  "routes": {
+    "user/signin": "/api/auth",
+    "user/signup": "/api/register",
+    "wallet/get_balance": "/api/get_balance",
+    "wallet/transactions": "/api/transactions" // New route
   }
-  ```
-- Example:
-  ```sh
-  curl -X POST http://localhost:8080/register -H "Content-Type: application/json" -d '{"url": "http://localhost:8083"}'
-  ```
+}
+```
+2. Save the file. The gateway will automatically reload the configuration and start routing requests for `/wallet/transactions` to the specified backend path.
+
+### Benefits
+- **Zero Downtime:** Update routes and servers without restarting the gateway.
+- **Flexibility:** Easily add, remove, or modify routes and backend servers.
+- **Scalability:** Supports multiple services and routes dynamically.
+
+---
 
 ## License
 MIT License

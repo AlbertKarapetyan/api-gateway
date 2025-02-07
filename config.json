@@ -1,13 +1,27 @@
 {
   "_comment": {
     "balancer_type": "Options: round_robin, least_connections, random. Defines request distribution strategy.",
-    "health_check_interval": "Time in seconds between server health checks."
+    "health_check_interval": "Time in seconds between server health checks.",
+    "routes": "Maps API gateway routes to backend services."
   },
   "balancer_type": "round_robin",
-  "servers": [
-    "http://localhost:8081",
-    "http://localhost:8082",
-    "http://localhost:8083"
-  ],
-  "health_check_interval": 5
+  "health_check_interval": 60,
+
+  "servers": {
+      "user": [
+        "http://localhost:8081",
+        "http://localhost:8082"
+      ],
+      "wallet": [
+        "http://localhost:8083",
+        "http://localhost:8084"
+      ]
+  },
+
+  "routes": {
+    "/user/signin":"/api/auth",
+    "/user/signup":"/api/register",
+
+    "/wallet/get_balance":"/api/get_balance"
+  }
 }
