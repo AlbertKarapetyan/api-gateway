@@ -67,20 +67,7 @@ The gateway will forward the request to a backend server based on the load balan
   ```sh
   curl http://localhost:8080/api
   ```
-
-#### `POST /register`
-- Registers a new backend server.
-- Request Body:
-  ```json
-  {
-    "url": "http://localhost:8083"
-  }
-  ```
-- Example:
-  ```sh
-  curl -X POST http://localhost:8080/register -H "Content-Type: application/json" -d '{"url": "http://localhost:8083"}'
-  ```
-
+---  
 ## License
 MIT License
 
