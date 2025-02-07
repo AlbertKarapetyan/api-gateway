@@ -16,6 +16,18 @@ This API Gateway is built in Go and provides load balancing between multiple bac
 - JWT Authentication Middleware for secure access control
 - Public Routes support for endpoints that do not require authentication
 
+## Branches
+This repository contains multiple branches for different versions of the API Gateway:
+
+### [feature-simple-load-balancer](https://github.com/AlbertKarapetyan/api-gateway/tree/feature-simple-load-balancer)
+This branch contains a **basic load balancer** implementation that distributes requests across multiple backend services using simple round-robin or least connections algorithms.
+
+### [feature-routing](https://github.com/AlbertKarapetyan/api-gateway/tree/feature-routing)
+This branch adds **dynamic routing** capabilities, allowing requests to be forwarded to different backend services based on the path defined in the configuration file.
+
+### [feature-check-jwt](https://github.com/AlbertKarapetyan/api-gateway/tree/feature-check-jwt)
+This branch introduces **JWT authentication middleware**, ensuring that only authorized requests can access protected routes, while allowing public routes to remain accessible without authentication.
+
 ## Installation
 
 ### Prerequisites
