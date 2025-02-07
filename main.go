@@ -3,6 +3,7 @@ package main
 import (
 	"api-gateway/internal/app"
 	"api-gateway/internal/config"
+	"api-gateway/internal/middleware"
 	"log"
 	"net/http"
 )
@@ -24,6 +25,11 @@ func main() {
 		log.Printf("  %s -> %s", route, path)
 	}
 
+	log.Println("PublicRoutes:")
+	for route, acc := range config.CFG.PublicRoutes {
+		log.Printf("  %s -> %v", route, acc)
+	}
+
 	configChangeChan := make(chan struct{})
 	go config.CheckingConfigs(configChangeChan)
 
@@ -35,7 +41,7 @@ func main() {
 	proxyService.InitServers()
 	go proxyService.HealthCheck()
 
-	http.HandleFunc("/", proxyService.ReverseProxy)
+	http.HandleFunc("/", middleware.AuthMiddleware(proxyService.ReverseProxy))
 
 	log.Println("🚀 Load Balancer started on :8080")
 	go func() {
