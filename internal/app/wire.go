@@ -21,12 +21,12 @@ func InitBackEndService() (interfaces.BackEndService, error) {
 
 func ProviderLoadBalancer() interfaces.LoadBalancer {
 	switch config.CFG.BalancerType {
-	case "least_connections":
-		return loadbalancers.NewLeastConnectionsBalancer()
 	case "round_robin":
 		return loadbalancers.NewRoundRobinBalancer()
+	case "least_connections":
+		return loadbalancers.NewLeastConnectionsBalancer()
 	default:
-		panic("Unknown balancer type: " + config.CFG.BalancerType)
+		return loadbalancers.NewRoundRobinBalancer() // default load balancer
 	}
 }
 
