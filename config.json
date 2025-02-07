@@ -23,5 +23,12 @@
     "/user/signup":"/api/register",
 
     "/wallet/get_balance":"/api/get_balance"
-  }
+  },
+
+  "public_routes": {
+    "/user/signin":true,
+    "/user/signup":true
+  },
+
+  "secret_key":"your-secret-key"
 }

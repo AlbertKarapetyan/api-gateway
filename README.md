@@ -13,6 +13,8 @@ This API Gateway is built in Go and provides load balancing between multiple bac
 - Health checks for backend services
 - Test servers for development and debugging
 - Dynamic Routing with Auto-Reload: Automatically reloads routing configuration without restarting the server.
+- JWT Authentication Middleware for secure access control
+- Public Routes support for endpoints that do not require authentication
 
 ## Installation
 
@@ -32,6 +34,9 @@ This API Gateway is built in Go and provides load balancing between multiple bac
 3. Configure the gateway by editing `config.json`:
    ```json
    {
+     "load_balancer": "round_robin",
+     "health_check_interval": 5,
+     
      "servers": {
         "user": [
           "http://localhost:8081",
@@ -47,8 +52,11 @@ This API Gateway is built in Go and provides load balancing between multiple bac
         "user/signup": "/api/register",
         "wallet/get_balance": "/api/get_balance"
       },
-      "load_balancer": "round_robin",
-      "health_check_interval": 5
+      "public_routes": {
+        "/user/signin": true,
+        "/user/signup": true
+      },
+      "secret_key": "your-secret-key"
    }
    ```
 4. Start the gateway:
@@ -70,6 +78,34 @@ Once running, send requests to the gateway:
 curl http://localhost:8080/user/signin
 ```
 The gateway will forward the request to a backend server based on the load balancing strategy.
+---
+## JWT Authentication Middleware
+
+The API Gateway includes JWT-based authentication to secure access to protected endpoints. Requests must include a valid JWT token in the `Authorization` header:
+
+### Middleware Implementation
+- The middleware extracts the JWT token from the request header.
+- It verifies the token signature using the configured secret key.
+- If the token is valid, the request proceeds to the backend service.
+- If the token is missing or invalid, the request is rejected with a `401 Unauthorized` response.
+
+### Example Request with JWT
+```sh
+curl -H "Authorization: Bearer <your-jwt-token>" http://localhost:8080/protected-route
+```
+
+### Public Routes
+Some endpoints, such as authentication-related routes, should be accessible without requiring a JWT token. These routes are specified in the `config.json` file under `public_routes`:
+
+```json
+"public_routes": {
+  "/user/signin": true,
+  "/user/signup": true
+}
+```
+
+The middleware will bypass authentication for these routes, allowing unauthenticated users to access them.
+
 ---
 ## Dynamic Routing with Auto-Reload
 The API Gateway supports **dynamic routing** and **auto-reloading** of the configuration without requiring a server restart. This feature allows you to update the `config.json` file while the server is running, and the gateway will automatically apply the changes.
