@@ -78,6 +78,7 @@ Once running, send requests to the gateway:
 curl http://localhost:8080/user/signin
 ```
 The gateway will forward the request to a backend server based on the load balancing strategy.
+
 ---
 ## JWT Authentication Middleware
 
