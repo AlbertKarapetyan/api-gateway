@@ -1,10 +1,13 @@
 {
-    "balancer_type": "least_connections",
-    "servers": [
-      "http://localhost:8081",
-      "http://localhost:8082",
-      "http://localhost:8083"
-    ],
-    "health_check_interval": 5
-  }
-  
+  "_comment": {
+    "balancer_type": "Options: round_robin, least_connections, random. Defines request distribution strategy.",
+    "health_check_interval": "Time in seconds between server health checks."
+  },
+  "balancer_type": "round_robin",
+  "servers": [
+    "http://localhost:8081",
+    "http://localhost:8082",
+    "http://localhost:8083"
+  ],
+  "health_check_interval": 5
+}

@@ -3,11 +3,10 @@ package loadbalancers
 import (
 	"api-gateway/internal/models"
 	"api-gateway/internal/services/interfaces"
-	"sync"
 )
 
 type leastConnectionsBalancer struct {
-	connections sync.Map
+	BaseLoadBalancer
 }
 
 func NewLeastConnectionsBalancer() interfaces.LoadBalancer {
@@ -37,18 +36,4 @@ func (l *leastConnectionsBalancer) GetNextServer(servers []*models.Server) *mode
 	}
 
 	return selected
-}
-
-// IncrementConnections implements interfaces.LoadBalancer.
-func (l *leastConnectionsBalancer) IncrementConnections(server *models.Server) {
-	val, _ := l.connections.LoadOrStore(server.URL, int32(0))
-	l.connections.Store(server.URL, val.(int32)+1)
-}
-
-// DecrementConnections implements interfaces.LoadBalancer.
-func (l *leastConnectionsBalancer) DecrementConnections(server *models.Server) {
-	val, _ := l.connections.LoadOrStore(server.URL, int32(0))
-	if val.(int32) > 0 {
-		l.connections.Store(server.URL, val.(int32)-1)
-	}
 }
